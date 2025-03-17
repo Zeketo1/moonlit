@@ -442,3 +442,85 @@ async function handleBooking(e) {
 if (bookingForm && roomBookingBtn) {
   bookingForm.addEventListener("submit", handleBooking);
 }
+
+document.getElementById('passwordResetForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const button = form.querySelector('button');
+  const buttonText = document.getElementById('buttonText');
+
+  // Initial email submission
+  if (document.getElementById('emailGroup').style.display !== 'none') {
+      const email = document.getElementById('fmail').value;
+      
+      button.disabled = true;
+      buttonText.textContent = 'Sending...';
+
+      try {
+          const response = await fetch(`${BaseUrl}api/auth/password/reset/`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ email })
+          });
+
+          if (response.ok) {
+              // Show token and password fields
+              document.getElementById('emailGroup').style.display = 'none';
+              document.getElementById('tokenGroup').style.display = 'block';
+              document.getElementById('passwordGroup').style.display = 'block';
+
+              // Add required attribute to token and password fields
+              document.getElementById('resetToken').setAttribute('required', true);
+              document.getElementById('newPassword').setAttribute('required', true);
+
+              buttonText.textContent = 'Set New Password';
+          } else {
+              const errorData = await response.json();
+              alert(`Error: ${errorData.detail || 'Failed to send reset email'}`);
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+      } finally {
+          button.disabled = false;
+      }
+  }
+  // Token and password submission
+  else {
+      const token = document.getElementById('resetToken').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const email = document.getElementById('fmail').value;
+
+      button.disabled = true;
+      buttonText.textContent = 'Updating...';
+
+      try {
+          const response = await fetch(`${BaseUrl}api/auth/password/reset/confirm/`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  email: email,
+                  token: token,
+                  new_password: newPassword
+              })
+          });
+
+          if (response.ok) {
+              alert('Password reset successfully! You can now login with your new password.');
+              window.location.reload();
+          } else {
+              const errorData = await response.json();
+              alert(`Error: ${errorData.detail || 'Password reset failed'}`);
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+      } finally {
+          button.disabled = false;
+      }
+  }
+});

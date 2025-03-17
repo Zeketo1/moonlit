@@ -829,18 +829,40 @@
                         <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
-                    <form action="#" class="d-flex flex-column gap-3">
-                        <div class="form-group">
-                            <label for="fmail" class=" text-dark mb-3">Your Email</label>
+                    <form id="passwordResetForm" class="d-flex flex-column gap-3">
+                        <!-- Initial Email Input -->
+                        <div id="emailGroup" class="form-group">
+                            <label for="fmail" class="text-dark mb-3">Your Email</label>
                             <div class="position-relative">
                                 <input type="email" name="email" id="fmail" placeholder="Enter your email" required>
                                 <i class="fa-sharp fa-light fa-envelope icon"></i>
                             </div>
                         </div>
-                        <div class="form-group my-3">
-                            <button class="theme-btn btn-style sm-btn fill w-100"><span>Reset Password</span></button>
+                    
+                        <!-- Hidden Token and Password Inputs -->
+                        <div id="tokenGroup" class="form-group" style="display: none;">
+                            <label for="resetToken" class="text-dark mb-3">Reset Token</label>
+                            <div class="position-relative">
+                                <input type="text" name="token" id="resetToken" placeholder="Enter your token">
+                                <i class="fa-sharp fa-light fa-key icon"></i>
+                            </div>
                         </div>
-                    </form>
+                    
+                        <div id="passwordGroup" class="form-group" style="display: none;">
+                            <label for="newPassword" class="text-dark mb-3">New Password</label>
+                            <div class="position-relative">
+                                <input type="password" name="new_password" id="newPassword" placeholder="Enter new password">
+                                <i class="fa-sharp fa-light fa-lock icon"></i>
+                            </div>
+                        </div>
+                    
+                        <!-- Submit Button -->
+                        <div class="form-group my-3">
+                            <button type="submit" class="theme-btn btn-style sm-btn fill w-100">
+                                <span id="buttonText">Reset Password</span>
+                            </button>
+                        </div>
+                    </form>                   
 
                     <span class="d-block text-center ">Remember Your Password? 
                 <a href="#" data-bs-target="#loginModal" data-bs-toggle="modal" class="text-primary">Login</a> </span>
