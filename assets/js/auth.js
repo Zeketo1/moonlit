@@ -13,6 +13,8 @@ function getCookie(name) {
   return cookieValue;
 }
 
+const BaseUrl = "https://hotel-backend-buns.onrender.com/";
+
 // Login Form Handler
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -23,7 +25,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   };
 
   try {
-    const response = await fetch("http://localhost:8000/api/login/", {
+    const response = await fetch(`${BaseUrl}api/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +41,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     localStorage.setItem("authToken", data.access);
 
     // Fetch user profile to check admin status
-    const profileResponse = await fetch("http://localhost:8000/api/user/", {
+    const profileResponse = await fetch(`${BaseUrl}api/user/`, {
       headers: {
         Authorization: `Bearer ${data.access}`,
       },
@@ -74,7 +76,7 @@ document
     };
 
     try {
-      const response = await fetch("http://localhost:8000/api/register/", {
+      const response = await fetch(`${BaseUrl}api/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,17 +116,19 @@ document
 
 document.addEventListener("DOMContentLoaded", async () => {
   const parentElement = document.querySelector(".main__right");
+  const parentElement2 = document.querySelector(".main_responsive");
   const profileElement = document.querySelector(".profile-container");
   const authToken = localStorage.getItem("authToken");
 
   // Show loading state immediately
   parentElement.innerHTML = '<div class="loading">Loading...</div>';
+  parentElement2.innerHTML = '<div class="loading">Loading...</div>';
 
   if (authToken) {
     try {
       // 1. Fetch user data first
       console.log("Fetching user data...");
-      const userResponse = await fetch("http://localhost:8000/api/user/", {
+      const userResponse = await fetch(`${BaseUrl}api/user/`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
@@ -144,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       // 2. Fetch bookings data
       console.log("Fetching bookings...");
       const bookingsResponse = await fetch(
-        "http://localhost:8000/api/bookings/my-bookings/",
+        `${BaseUrl}api/bookings/my-bookings/`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -165,6 +169,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 3. Generate bookings HTML with safe data handling
       const bookingsHTML = bookingsData
+        .filter((booking) => booking.status !== "canceled")
         .map((booking) => {
           // Handle missing room data
           const room = booking.room_detail || {};
@@ -193,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         </div>
                         ${
                           booking.status === "pending"
-                            ? `<span class="delete-booking" onclick="handleDeleteBooking(${booking.id})">Delete</span>`
+                            ? `<span class="delete-booking" onclick={handleDeleteBooking(${booking.id})}>Delete</span>`
                             : '<span class="status-display">Cannot delete</span>'
                         }
                     </div>
@@ -207,6 +212,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <span>Book Now</span>
                 </a>
                 <a href="#" class="theme-btn btn-style sm-btn border d-none d-lg-block" 
+                   aria-label="Profile Button" 
+                   data-bs-toggle="modal" 
+                   data-bs-target="#profileModal">
+                    <span>Profile</span>
+                </a>
+                <button class="theme-btn btn-style sm-btn fill menu__btn d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                  <span><img src="assets/images/icon/menu-icon.svg" alt=""></span>
+                </button>
+            `;
+
+      parentElement2.innerHTML = `
+                <a href="room-four.html" class="theme-btn btn-style sm-btn fill">
+                    <span>Book Now</span>
+                </a>
+                <a href="#" class="theme-btn btn-style sm-btn border d-lg-block" 
                    aria-label="Profile Button" 
                    data-bs-toggle="modal" 
                    data-bs-target="#profileModal">
@@ -282,6 +302,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span>Sign Up</span>
             </a>
         `;
+    parentElement2.innerHTML = `
+            <a href="#" class="theme-btn btn-style sm-btn border d-lg-block" 
+               aria-label="Login Button" 
+               data-bs-toggle="modal" 
+               data-bs-target="#loginModal">
+                <span>Sign In</span>
+            </a>
+            <a href="#" class="theme-btn btn-style sm-btn border d-lg-block" 
+               aria-label="Sign Up Button" 
+               data-bs-toggle="modal" 
+               data-bs-target="#signupModal">
+                <span>Sign Up</span>
+            </a>
+        `;
   }
 });
 
@@ -321,25 +355,20 @@ function getSelectedServices() {
   return services;
 }
 
-const handleDeleteBookings = async (hotelId) => {
-  e.preventDefault();
-
+const handleDeleteBooking = async (hotelId) => {
   try {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
       alert("Please login to book a room");
-      return window.location.assign("/login.html");
+      return window.location.reload();
     }
-    const response = await fetch(
-      `http://localhost:8000/api/bookings/cancel/${hotelId}/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${BaseUrl}api/bookings/cancel/${hotelId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
     console.log(response.json());
 
     alert("Booking cancelled successfully");
@@ -380,7 +409,7 @@ async function handleBooking(e) {
 
     roomBookingBtn.innerHTML = '<div class="spinner"></div> Booking...';
 
-    const response = await fetch("http://localhost:8000/api/bookings/create/", {
+    const response = await fetch(`${BaseUrl}api/bookings/create/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'https://hotel-backend-buns.onrender.com/api';
 const authToken = localStorage.getItem('authToken');
 
 // Fetch Dashboard Stats
@@ -62,6 +62,7 @@ async function fetchBookings() {
         bookingsList.innerHTML = bookings.map(booking => `
             <div class="booking-card">
                 <p>Booking ID: ${booking.id}</p>
+                <h3>${booking.room_detail.type}</h3>
                 <p>Customer ID: ${booking.user}</p>
                 <p>Status: ${booking.status}</p>
                 <p>Total Price: $${booking.total_price}</p>
