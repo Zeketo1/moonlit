@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="./assets/css/admin.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Admin Dashboard</h1>
+      <nav>
+        <a href="#add-room">Add Room</a>
+        <a href="#manage-customers">Manage Customers</a>
+        <a href="#manage-bookings">Manage Bookings</a>
+        <button id="logout">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="dashboard-stats">
+        <h2>Dashboard Overview</h2>
+        <div class="stats">
+          <div class="stat-card" id="total-rooms">
+            <h3>Total Rooms</h3>
+            <p>Loading...</p>
+          </div>
+          <div class="stat-card" id="total-bookings">
+            <h3>Total Bookings</h3>
+            <p>Loading...</p>
+          </div>
+          <div class="stat-card" id="total-customers">
+            <h3>Total Customers</h3>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="add-room">
+        <h2>Add New Room</h2>
+        <form id="add-room-form">
+          <input type="text" id="room-type" placeholder="Room Type" required />
+          <input type="number" id="room-price" placeholder="Price" required />
+          <input
+            type="text"
+            id="room-image"
+            placeholder="Room Image"
+            required
+          />
+          <input
+            type="number"
+            id="room-guest"
+            placeholder="Room Guest"
+            required
+          />
+          <textarea id="room-description" placeholder="Description"></textarea>
+          <button type="submit">Add Room</button>
+        </form>
+      </section>
+
+      <h2>Room Management</h2>
+
+      <div class="container">
+        <div class="room-grid" id="roomContainer">
+          <!-- Rooms will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Edit Modal -->
+      <div id="editModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2>Edit Room</h2>
+          <form id="editForm">
+            <div class="form-group">
+              <label for="editType">Room Type:</label>
+              <input type="text" id="editType" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="editPrice">Price per Night:</label>
+              <input type="number" id="editPrice" step="0.01" required>
+            </div>
+      
+            <div class="form-group">
+              <label for="editDescription">Description:</label>
+              <textarea id="editDescription" rows="4" required></textarea>
+            </div>
+      
+            <div class="form-group">
+              <label for="editImage">Image URL:</label>
+              <input type="url" id="editImage" required>
+            </div>
+      
+            <div class="form-group">
+              <label for="editMaxGuests">Maximum Guests:</label>
+              <input type="number" id="editMaxGuests" min="1" required>
+            </div>
+      
+            <div class="form-group checkbox-group">
+              <label for="editAvailable">Available:</label>
+              <input type="checkbox" id="editAvailable">
+            </div>
+      
+            <div class="form-actions">
+              <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn save">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section id="manage-bookings">
+        <h2>Manage Bookings</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;" id="bookings-list"></div>
+      </section>
+    </main>
+
+    <script src="./assets/js/admin.js"></script>
+  </body>
+</html>
